@@ -1,0 +1,15 @@
+main.py
+menu.py
+itens.py
+estrutura.py
+estoque.py
+mps.py
+mrp.py
+ordens.py
+capacidade.py
+custos.py
+relatorios.py
+graficos.py
+persistencia.py
+utils.py
+README.md
