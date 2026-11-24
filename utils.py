@@ -29,12 +29,13 @@ def data_hoje():
     return datetime.now().strftime("%d/%m/%Y")
 
 
-def linha(simbolo="-"):
+def linha(simbolo="-"):# formatação de linha bonitinha
     print(simbolo * 50)
 
 
 def titulo(texto):
     # Cabeçalho bonitinho para cada tela.
+    # Mande somente o texto quando chamar
     print()
     linha("=")
     print(texto)
