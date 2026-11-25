@@ -97,7 +97,7 @@ def movimentar_estoque(dados):
             print("ERRO: o ajuste não pode ser zero.")
             return
     else:
-        quantidade = ler_decimal("Quantidade: ", mínimo=0.001)
+        quantidade = ler_decimal("Quantidade: ", minimo=0.001)
 
     data = ler_data("Data (dd/mm/aaaa, ENTER = hoje): ")
     documento = ler_texto("Documento/motivo (ex.: NF 4521, Inventário): ")
