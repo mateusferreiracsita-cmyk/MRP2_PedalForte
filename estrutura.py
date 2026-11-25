@@ -1,16 +1,18 @@
 """Estrutura de produto, a "BOM" (RF03 e RN03).
 Cada item fabricado guarda a lista dos seus componentes, e cada
 componente tem a quantidade necessária para fazer uma unidade do pai.
+
+Quem pode ser componente de quem (RN03):
+PA aceita SA e MP | SA aceita só MP | MP não tem estrutura.
+
+Com essa regra a estrutura só "desce" (PA -> SA -> MP), então nunca
+existe ciclo e nunca passa de 3 níveis.
 """
+
 
 from itens import escolher_item
 from persistencia import salvar_dados
 from utils import formatar_numero, ler_decimal, titulo
-
-# Quem pode ser componente de quem (RN03):
-#   PA aceita SA e MP | SA aceita só MP | MP não tem estrutura.
-# Com essa regra a estrutura só "desce" (PA -> SA -> MP), então nunca
-# existe ciclo e nunca passa de 3 níveis.
 
 
 

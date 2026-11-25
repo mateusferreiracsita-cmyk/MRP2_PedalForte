@@ -1,4 +1,3 @@
-# usar utf-8 para linguagem BR
 """Guarda e carrega os dados nos arquivos da pasta data/.
 
 A ideia é simples: quando o sistema abre, carregar_dados() lê tudo e
@@ -14,7 +13,8 @@ from pathlib import Path
 # a pasta data/ fica ao lado deste arquivo, nao importa de onde rodamos
 PASTA_DATA = Path(__file__).parent / "data"
 
-#super importanta para a fluidez do programa ->
+# usar utf-8 para linguagem BR
+
 ARQUIVOS_JSON = {
     "itens": "itens.json",
     "estrutura": "estrutura.json",

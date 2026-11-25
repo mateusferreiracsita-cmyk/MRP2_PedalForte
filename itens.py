@@ -1,5 +1,5 @@
-"""Cadastro de itens (RF02): cadastrar, listar e alterar.
-"""
+# Cadastro de itens (RF02): cadastrar, listar e alterar.
+
 
 from persistencia import salvar_dados
 from utils import (formatar_dinheiro, formatar_numero, ler_codigo_item,

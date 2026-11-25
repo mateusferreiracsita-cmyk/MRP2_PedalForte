@@ -3,15 +3,16 @@
 Centro de trabalho = onde as coisas são fabricadas (soldagem, montagem...).
 Roteiro = diz qual centro fabrica cada item e quanto tempo leva por unidade.
 
-Mais pra frente este módulo também vai calcular a carga x capacidade (CRP).
 """
 
-
+from mps import SEMANAS
+from persistencia import salvar_dados
 from itens import escolher_item
 from persistencia import salvar_dados
 from utils import (formatar_dinheiro, formatar_numero, ler_decimal,
                    ler_texto, linha, titulo)
 
+STATUS_NA_CARGA = ("PLANEJADA", "FIRME", "LIBERADA")
 
 def codigo_centro_valido(codigo):
     #Confere se o código é CT-01, CT-02... (CT, hífen e 2 números).
@@ -132,3 +133,95 @@ def definir_roteiro(dados):
     dados["roteiros"][codigo] = {"centro": centro, "tempo_unitario": tempo}
     salvar_dados(dados, "roteiros")
     print(f"Roteiro de {codigo} salvo!")
+
+
+def formatar_horas(valor):
+    #Horas com uma casa decimal e vírgula: 15 -> 15,0.
+    return f"{valor:.1f}".replace(".", ",")
+
+
+def calcular_carga(dados):
+    """Calcula a carga de cada centro, semana a semana (RN09).
+
+    Carga da semana = soma de (quantidade da OP x tempo por unidade do
+    roteiro) das OPs que são liberadas naquela semana.
+    Devolve ({centro: [carga das 8 semanas]}, [avisos]).
+    """
+    cargas = {}
+    for codigo in dados["centros"]:
+        cargas[codigo] = [0] * SEMANAS
+
+    avisos = []
+    for ordem in dados["ordens"]:
+        if ordem["tipo"] != "OP":
+            continue
+        if ordem["status"] not in STATUS_NA_CARGA:
+            continue
+
+        roteiro = dados["roteiros"].get(ordem["item"])
+        if roteiro is None:
+            aviso = f"O item {ordem['item']} não tem roteiro: fora da carga."
+            if aviso not in avisos:
+                avisos.append(aviso)
+            continue
+
+        # ordem atrasada (liberação antes da semana 1) pesa na semana 1
+        semana = ordem["semana_liberacao"]
+        if semana < 1:
+            semana = 1
+        if semana > SEMANAS:
+            continue
+
+        horas = ordem["quantidade"] * roteiro["tempo_unitario"]
+        cargas[roteiro["centro"]][semana - 1] += horas
+
+    # arredonda para não aparecer sobra de conta com decimais
+    for codigo in cargas:
+        for i in range(SEMANAS):
+            cargas[codigo][i] = round(cargas[codigo][i], 4)
+    return cargas, avisos
+
+
+def exibir_crp(dados):
+    """Mostra a carga x capacidade de cada centro, semana a semana
+    (RF12), e avisa as semanas com sobrecarga."""
+    titulo("CARGA x CAPACIDADE (CRP)")
+    if not dados["centros"]:
+        print("Nenhum centro cadastrado ainda.")
+        return
+    if not dados["ordens"]:
+        print("Ainda não há ordens. Execute o MRP antes (opção 4).")
+        return
+
+    cargas, avisos = calcular_carga(dados)
+
+    for codigo in sorted(dados["centros"]):
+        centro = dados["centros"][codigo]
+        capacidade = centro["capacidade_horas_semana"]
+        print(f"\nCARGA x CAPACIDADE - {codigo} {centro['descricao']} "
+              f"({formatar_horas(capacidade)} h/semana)")
+        print(f"{'Sem':<5}{'Carga(h)':>9}{'Uso(%)':>8}")
+        linha()
+
+        semanas_em_sobrecarga = []
+        for semana in range(1, SEMANAS + 1):
+            carga = cargas[codigo][semana - 1]
+            uso = carga / capacidade * 100
+            barras = "#" * round(uso / 10)  # cada # vale 10% de uso
+            alerta = ""
+            if carga > capacidade:
+                alerta = " SOBRECARGA"
+                semanas_em_sobrecarga.append(str(semana))
+            print(f"{semana:<5}{formatar_horas(carga):>9}{round(uso):>8}"
+                  f"  {barras}{alerta}")
+
+        if semanas_em_sobrecarga:
+            if len(semanas_em_sobrecarga) == 1:
+                onde = "na semana "
+            else:
+                onde = "nas semanas "
+            print("Sugestão: antecipar OPs ou programar hora extra "
+                  + onde + ", ".join(semanas_em_sobrecarga) + ".")
+
+    for aviso in avisos:
+        print("\nAVISO: " + aviso)
