@@ -8,8 +8,8 @@ modo texto, para a fábrica fictícia **Pedal Forte Bicicletas** (Divinópolis-M
 - **Professor:** Guido Pantuza
 - **Trabalho:** 2º Sistema MRP II (individual)
 - **Aluno:** Mateus Ferreira Carvalho Silva
-- **Vídeo de demonstração do sistema:** [cole o link aqui]
-- **Vídeo de demonstração do código:** [cole o link aqui]
+- **Vídeo de demonstração do sistema:** [https://medal.tv/games/screen-capture/clips/o01HzD7XyjdzV1cEJ?invite=cr-MSxpN2MsNDE3NTM1NTY3]
+- **Vídeo de demonstração do código:** [https://medal.tv/games/screen-capture/clips/o02B1EFq36ykjQAOA?invite=cr-MSxEU3ksNDE3NTM1NTY3]
 
 ---
 
